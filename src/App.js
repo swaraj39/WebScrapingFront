@@ -1,0 +1,71 @@
+import { useEffect, useState } from "react";
+import "./App.css";
+
+function App() {
+    const [metals, setMetals] = useState({
+        gold24: null,
+        silver: null,
+        platinum: null,
+        copper: null,
+        lead: null
+    });
+
+    const [search, setSearch] = useState("");
+
+    useEffect(() => {
+        fetch("http://localhost:8081/metal")
+            .then(res => res.json())
+            .then(data => {
+                // normalize backend key just in case
+                console.log(data);
+                setMetals({
+                    gold24: data.gold24,
+                    silver: data.silver,
+                    platinum: data.platinum,
+                    copper: data.copper,
+                    lead: data.Lead
+                });
+            })
+            .catch(err => console.error("Fetch error:", err));
+    }, []);
+
+    const cards = [
+        { name: "Gold (24K)", value: metals.gold24, className: "gold", icon: "🟡" },
+        { name: "Silver", value: metals.silver, className: "silver", icon: "⚪" },
+        { name: "Platinum", value: metals.platinum, className: "platinum", icon: "🔵" },
+        { name: "Copper", value: metals.copper, className: "copper", icon: "🟠" },
+        { name: "Lead", value: metals.lead, className: "lead", icon: "⚫" }
+    ];
+
+    const filteredCards = cards.filter(card =>
+        card.name.toLowerCase().includes(search.toLowerCase())
+    );
+
+    return (
+        <div className="dashboard">
+            <header className="header">
+                <h1>Metal Price Dashboard</h1>
+                <input
+                    type="text"
+                    placeholder="Search metal..."
+                    value={search}
+                    onChange={(e) => setSearch(e.target.value)}
+                />
+            </header>
+
+            <div className="card-container">
+                {filteredCards.map((card, index) => (
+                    <div className={`card ${card.className}`} key={index}>
+                        <h2>{card.icon} {card.name}</h2>
+                        <p className={card.value == null ? "loading" : ""}>
+                            {card.value != null ? card.value : "Fetching price..."}
+                        </p>
+
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+}
+
+export default App;
