@@ -13,7 +13,7 @@ function App() {
     const [search, setSearch] = useState("");
 
     useEffect(() => {
-        fetch("http://localhost:8081/metal")
+        fetch("https://webscraping-2-3iey.onrender.com/metal")
             .then(res => res.json())
             .then(data => {
                 // normalize backend key just in case
