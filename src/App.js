@@ -13,7 +13,7 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("http://localhost:8081/metal")
+        fetch("https://webscraping-2-3iey.onrender.com/metal")
             .then(res => {
                 if (!res.ok) throw new Error("API error");
                 return res.json();
