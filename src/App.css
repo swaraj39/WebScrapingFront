@@ -37,189 +37,124 @@
   }
 }
 
-/* App.css - Improved Version */
-
-/* App.css */
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
+/* GLOBAL */
 body {
-    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    min-height: 100vh;
+  margin: 0;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #eef2f7, #dbeafe);
+  font-family: "Inter", "Segoe UI", sans-serif;
 }
 
+/* DASHBOARD */
 .dashboard {
-    max-width: 1400px;
-    margin: 0 auto;
-    padding: 2rem;
+  padding: 28px;
+  max-width: 1200px;
+  margin: auto;
 }
 
+/* HEADER */
 .header {
-    text-align: center;
-    margin-bottom: 3rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 28px;
+  border-radius: 16px;
+  background: rgba(31, 41, 55, 0.85);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+  color: white;
 }
 
 .header h1 {
-    color: white;
-    font-size: 2.5rem;
-    margin-bottom: 1.5rem;
-    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+  font-size: 26px;
+  margin: 0;
+  letter-spacing: 0.5px;
 }
 
 .header input {
-    padding: 1rem 2rem;
-    width: 100%;
-    max-width: 400px;
-    border: none;
-    border-radius: 50px;
-    font-size: 1rem;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
+  padding: 12px 16px;
+  border-radius: 10px;
+  border: none;
+  width: 240px;
+  font-size: 15px;
 }
 
 .header input:focus {
-    outline: none;
-    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.2);
-    transform: scale(1.02);
+  outline: 2px solid #60a5fa;
 }
 
+/* CARDS */
 .card-container {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 2rem;
-    padding: 1rem;
+  margin-top: 40px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 24px;
 }
 
 .card {
-    background: white;
-    border-radius: 20px;
-    padding: 1.8rem;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease;
-    display: flex;
-    flex-direction: column;
-    position: relative;
-    overflow: hidden;
-}
-
-.card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 30px 60px rgba(0, 0, 0, 0.15);
+  padding: 28px;
+  border-radius: 18px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 .card::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 6px;
-    background: currentColor;
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.12;
+  background: radial-gradient(circle at top, white, transparent);
 }
 
-.card-header {
-    display: flex;
-    align-items: center;
-    gap: 0.8rem;
-    margin-bottom: 1.5rem;
-}
-
-.card-icon {
-    font-size: 2rem;
+.card:hover {
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: 0 18px 40px rgba(0,0,0,0.15);
 }
 
 .card h2 {
-    font-size: 1.4rem;
-    color: #333;
-    margin: 0;
+  margin-bottom: 14px;
+  font-size: 20px;
 }
 
-.price-container {
-    display: flex;
-    flex-direction: column;
-    gap: 0.8rem;
+.card p {
+  font-size: 32px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
 }
 
-.price-main {
-    display: flex;
-    align-items: baseline;
-    gap: 0.8rem;
-    flex-wrap: wrap;
+/* METAL COLORS */
+.gold {
+  background: linear-gradient(135deg, #fde68a, #f59e0b);
+  color: #78350f;
 }
 
-.price-label {
-    font-size: 1rem;
-    color: #666;
-    font-weight: 600;
-    background: #f0f0f0;
-    padding: 0.3rem 0.8rem;
-    border-radius: 20px;
+.silver {
+  background: linear-gradient(135deg, #e5e7eb, #9ca3af);
+  color: #111827;
 }
 
-.price-value {
-    font-size: 2rem;
-    font-weight: 700;
-    color: #2c3e50;
-    margin: 0;
+.platinum {
+  background: linear-gradient(135deg, #dbeafe, #60a5fa);
+  color: #1e3a8a;
 }
 
-.price-sub {
-    margin-top: 0.3rem;
-    padding-top: 0.8rem;
-    border-top: 1px solid #eee;
-}
-
-.sub-label {
-    font-size: 0.9rem;
-    color: #888;
-}
-
+/* LOADING SHIMMER */
 .loading {
-    color: #999;
-    font-style: italic;
-    animation: pulse 1.5s infinite;
+  color: transparent;
+  background: linear-gradient(
+          90deg,
+          rgba(255,255,255,0.2) 25%,
+          rgba(255,255,255,0.6) 50%,
+          rgba(255,255,255,0.2) 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.4s infinite;
+  border-radius: 6px;
 }
 
-@keyframes pulse {
-    0%, 100% { opacity: 1; }
-    50% { opacity: 0.5; }
-}
-
-/* Metal-specific colors and gradients */
-.card.gold::before { background: #ffd700; color: #ffd700; }
-.card.gold .price-value { color: #b8860b; }
-
-.card.silver::before { background: #c0c0c0; color: #c0c0c0; }
-.card.silver .price-value { color: #71797e; }
-
-.card.platinum::before { background: #e5e4e2; color: #e5e4e2; }
-.card.platinum .price-value { color: #6d6e70; }
-
-.card.copper::before { background: #b87333; color: #b87333; }
-.card.copper .price-value { color: #b87333; }
-
-.card.lead::before { background: #4a4a4a; color: #4a4a4a; }
-.card.lead .price-value { color: #2c3e50; }
-
-/* Responsive design */
-@media (max-width: 768px) {
-    .dashboard {
-        padding: 1rem;
-    }
-    
-    .header h1 {
-        font-size: 2rem;
-    }
-    
-    .card-container {
-        grid-template-columns: 1fr;
-    }
-    
-    .price-value {
-        font-size: 1.6rem;
-    }
+@keyframes shimmer {
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
 }
