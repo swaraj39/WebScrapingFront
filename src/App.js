@@ -1,177 +1,231 @@
-import { useEffect, useState } from "react";
-import "./App.css";
-
-function App() {
-    const [metals, setMetals] = useState({
-        gold24: null,
-        silver: null,
-        copper: null,
-        lead: null
-    });
-
-    const [search, setSearch] = useState("");
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetch("http://localhost:8081/metal")
-            .then(res => {
-                if (!res.ok) throw new Error("API error");
-                return res.json();
-            })
-            .then(data => {
-                setMetals({
-                    gold24: data.gold24 || null,
-                    silver: data.silver || null,
-                    copper: data.copper || null,
-                    lead: data.lead || null
-                });
-                setLoading(false);
-            })
-            .catch(err => {
-                console.error("Fetch error:", err);
-                setLoading(false);
-            });
-    }, []);
-
-    // Extract numeric value from ₹ string
-    const extractNumericValue = (value) => {
-        if (!value) return null;
-        const str = String(value);
-        const match = str.match(/[\d,]+(\.\d+)?/);
-        if (!match) return null;
-        return parseFloat(match[0].replace(/,/g, ""));
-    };
-
-    const formatCurrency = (value) => {
-        const num = extractNumericValue(value);
-        if (num === null) return null;
-        return `₹${num.toLocaleString("en-IN")}`;
-    };
-
-    const calculatePerKg = (value) => {
-        const num = extractNumericValue(value);
-        if (num === null) return null;
-        return `₹${(num * 100).toLocaleString("en-IN")}/kg`;
-    };
-
-    // ⭐ Price movement feature
-    const getPriceChange = (current, previous) => {
-        const curr = extractNumericValue(current);
-        const prev = extractNumericValue(previous);
-        if (curr === null || prev === null) return null;
-
-        const diff = curr - prev;
-        const percent = ((diff / prev) * 100).toFixed(2);
-
-        return {
-            diff,
-            percent,
-            isUp: diff > 0
-        };
-    };
-
-    const formatChange = (change) => {
-        if (!change) return null;
-        const symbol = change.isUp ? "▲" : "▼";
-        const sign = change.isUp ? "+" : "";
-        return `${symbol} ${sign}₹${Math.abs(change.diff).toLocaleString("en-IN")} (${sign}${change.percent}%)`;
-    };
-
-    const cards = [
-        { name: "Gold (24K)", value: metals.gold24, className: "gold", icon: "🟡" },
-        { name: "Silver", value: metals.silver, className: "silver", icon: "⚪" },
-        { name: "Copper", value: metals.copper, className: "copper", icon: "🟠" },
-        { name: "Lead", value: metals.lead, className: "lead", icon: "⚫" }
-    ];
-
-    const filteredCards = cards.filter(card =>
-        card.name.toLowerCase().includes(search.toLowerCase())
-    );
-
-    return (
-        <div className="dashboard">
-            <header className="header">
-                <h1>Metal Price Dashboard</h1>
-                <input
-                    type="text"
-                    placeholder="Search metal..."
-                    value={search}
-                    onChange={(e) => setSearch(e.target.value)}
-                />
-            </header>
-
-            <div className="card-container">
-                {filteredCards.map((card, index) => {
-                    const current = formatCurrency(card.value?.current);
-                    const previous = formatCurrency(card.value?.previous);
-                    const perKg = calculatePerKg(card.value?.current);
-                    const change = getPriceChange(
-                        card.value?.current,
-                        card.value?.previous
-                    );
-
-                    return (
-                        <div className={`card ${card.className}`} key={index}>
-                            <div className="card-header">
-                                <span className="card-icon">{card.icon}</span>
-                                <h2>{card.name}</h2>
-                            </div>
-
-                            <div className="price-container">
-                                <div className="price-main">
-                                    <span className="price-label">10g</span>
-
-                                    {loading ? (
-                                        <p className="loading">Fetching price...</p>
-                                    ) : current ? (
-                                        <p className="price-value">{current}</p>
-                                    ) : (
-                                        <p className="not-available">Price unavailable</p>
-                                    )}
-                                </div>
-
-                                <div className="price-sub">
-                                    {loading ? (
-                                        "Loading..."
-                                    ) : current ? (
-                                        <>
-                                            <div><strong>1kg:</strong> {perKg}</div>
-
-                                            {previous && (
-                                                <div className="previous">
-                                                    Previous: {previous}
-                                                </div>
-                                            )}
-
-                                            {change && (
-                                                <div className={`price-change ${change.isUp ? "up" : "down"}`}>
-                                                    {formatChange(change)}
-                                                </div>
-                                            )}
-
-                                            {/*{change && (*/}
-                                            {/*    <div className="profit-hint">*/}
-                                            {/*        If you bought 10g yesterday →*/}
-                                            {/*        <strong>*/}
-                                            {/*            {change.isUp*/}
-                                            {/*                ? ` profit ₹${Math.abs(change.diff).toLocaleString("en-IN")}`*/}
-                                            {/*                : ` loss ₹${Math.abs(change.diff).toLocaleString("en-IN")}`*/}
-                                            {/*            }*/}
-                                            {/*        </strong>*/}
-                                            {/*    </div>*/}
-                                            {/*)}*/}
-                                        </>
-                                    ) : (
-                                        "No data available"
-                                    )}
-                                </div>
-                            </div>
-                        </div>
-                    );
-                })}
-            </div>
-        </div>
-    );
+.App {
+  text-align: center;
 }
 
-export default App;
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ===== GLOBAL ===== */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+  background: linear-gradient(135deg, #0f172a 0%, #020617 100%);
+  min-height: 100vh;
+  padding: 20px;
+  color: #e5e7eb;
+}
+
+.dashboard {
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+/* ===== HEADER ===== */
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header h1 {
+  color: #f1f5f9;
+  font-size: 2.5rem;
+  margin-bottom: 20px;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.header input {
+  padding: 15px 30px;
+  width: 100%;
+  max-width: 500px;
+  border-radius: 50px;
+  border: 1px solid #1e293b;
+  font-size: 1.05rem;
+  background: rgba(15, 23, 42, 0.8);
+  color: #e5e7eb;
+  transition: 0.3s;
+}
+
+.header input:focus {
+  outline: none;
+  border: 1px solid #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+}
+
+.header input::placeholder {
+  color: #64748b;
+}
+
+/* ===== CARD GRID ===== */
+.card-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 30px;
+}
+
+/* ===== CARD ===== */
+.card {
+  background: rgba(15, 23, 42, 0.75);
+  border-radius: 24px;
+  padding: 25px;
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(148, 163, 184, 0.15);
+  transition: 0.35s ease;
+  position: relative;
+}
+
+.card:hover {
+  transform: translateY(-8px) scale(1.01);
+  box-shadow: 0 0 25px rgba(59, 130, 246, 0.15);
+}
+
+/* top glow bar */
+.card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 5px;
+  border-radius: 24px 24px 0 0;
+  background: currentColor;
+}
+
+/* ===== CARD HEADER ===== */
+.card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.card-icon {
+  font-size: 2rem;
+}
+
+.card h2 {
+  font-size: 1.4rem;
+  color: #f1f5f9;
+  font-weight: 600;
+}
+
+/* ===== PRICE BOX ===== */
+.price-container {
+  background: rgba(2, 6, 23, 0.6);
+  border-radius: 16px;
+  padding: 20px;
+}
+
+.price-main {
+  display: flex;
+  align-items: baseline;
+  gap: 15px;
+}
+
+.price-label {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #94a3b8;
+  background: rgba(148, 163, 184, 0.1);
+  padding: 6px 14px;
+  border-radius: 20px;
+  text-transform: uppercase;
+}
+
+.price-value {
+  font-size: 2.1rem;
+  font-weight: 800;
+  color: #f8fafc;
+}
+
+.price-sub {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.2);
+  font-size: 0.95rem;
+  color: #cbd5f5;
+}
+
+/* ===== PRICE STATUS ===== */
+.loading {
+  color: #facc15;
+  animation: pulse 1.5s infinite;
+}
+
+.not-available {
+  color: #f87171;
+}
+
+.price-change {
+  margin-top: 6px;
+  font-weight: 600;
+}
+
+.price-change.up {
+  color: #22c55e;
+}
+
+.price-change.down {
+  color: #ef4444;
+}
+
+.profit-hint {
+  margin-top: 4px;
+  font-size: 0.85rem;
+  color: #94a3b8;
+}
+
+/* ===== METAL COLORS ===== */
+.card.gold { color: #facc15; }
+.card.silver { color: #cbd5f5; }
+.card.copper { color: #f97316; }
+.card.lead { color: #94a3b8; }
+
+/* ===== ANIMATION ===== */
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .header h1 { font-size: 2rem; }
+  .price-value { font-size: 1.8rem; }
+}
