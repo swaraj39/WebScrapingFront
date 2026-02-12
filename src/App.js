@@ -16,6 +16,7 @@ function App() {
         fetch("https://webscraping-2-3iey.onrender.com/metal")
             .then(res => res.json())
             .then(data => {
+                // normalize backend key just in case
                 console.log(data);
                 setMetals({
                     gold24: data.gold24,
@@ -28,53 +29,12 @@ function App() {
             .catch(err => console.error("Fetch error:", err));
     }, []);
 
-    // Function to calculate price for 10 grams
-    const calculatePricePer10g = (pricePerKg) => {
-        if (pricePerKg === null) return null;
-        return (pricePerKg / 100).toFixed(2);
-    };
-
     const cards = [
-        { 
-            name: "Gold (24K)", 
-            value: metals.gold24, 
-            pricePer10g: calculatePricePer10g(metals.gold24),
-            className: "gold", 
-            icon: "🟡",
-            unit: "g"
-        },
-        { 
-            name: "Silver", 
-            value: metals.silver, 
-            pricePer10g: calculatePricePer10g(metals.silver),
-            className: "silver", 
-            icon: "⚪",
-            unit: "g"
-        },
-        { 
-            name: "Platinum", 
-            value: metals.platinum, 
-            pricePer10g: calculatePricePer10g(metals.platinum),
-            className: "platinum", 
-            icon: "🔵",
-            unit: "g"
-        },
-        { 
-            name: "Copper", 
-            value: metals.copper, 
-            pricePer10g: calculatePricePer10g(metals.copper),
-            className: "copper", 
-            icon: "🟠",
-            unit: "g"
-        },
-        { 
-            name: "Lead", 
-            value: metals.lead, 
-            pricePer10g: calculatePricePer10g(metals.lead),
-            className: "lead", 
-            icon: "⚫",
-            unit: "g"
-        }
+        { name: "Gold (24K)", value: metals.gold24, className: "gold", icon: "🟡" },
+        { name: "Silver", value: metals.silver, className: "silver", icon: "⚪" },
+        { name: "Platinum", value: metals.platinum, className: "platinum", icon: "🔵" },
+        { name: "Copper", value: metals.copper, className: "copper", icon: "🟠" },
+        { name: "Lead", value: metals.lead, className: "lead", icon: "⚫" }
     ];
 
     const filteredCards = cards.filter(card =>
@@ -96,23 +56,11 @@ function App() {
             <div className="card-container">
                 {filteredCards.map((card, index) => (
                     <div className={`card ${card.className}`} key={index}>
-                        <div className="card-header">
-                            <span className="card-icon">{card.icon}</span>
-                            <h2>{card.name}</h2>
-                        </div>
-                        <div className="price-container">
-                            <div className="price-main">
-                                <span className="price-label">10g</span>
-                                <p className={`price-value ${card.pricePer10g == null ? "loading" : ""}`}>
-                                    {card.pricePer10g != null 
-                                        ? `₹${parseFloat(card.pricePer10g).toLocaleString('en-IN')}` 
-                                        : "Fetching price..."}
-                                </p>
-                            </div>
-                            <div className="price-sub">
-                                <span className="sub-label">(1kg: ₹{card.value != null ? parseFloat(card.value).toLocaleString('en-IN') : "---"})</span>
-                            </div>
-                        </div>
+                        <h2>{card.icon} {card.name}</h2>
+                        <p className={card.value == null ? "loading" : ""}>
+                            {card.value != null ? card.value : "Fetching price..."}
+                        </p>
+
                     </div>
                 ))}
             </div>
