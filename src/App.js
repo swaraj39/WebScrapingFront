@@ -3,30 +3,36 @@ import "./App.css";
 
 function App() {
     const [metals, setMetals] = useState({
-        gold24: null,
-        silver: null,
-        platinum: null,
-        copper: null,
-        lead: null
+        gold24: "",
+        silver: "",
+        platinum: "",
+        copper: "",
+        lead: ""
     });
 
     const [search, setSearch] = useState("");
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        fetch("https://webscraping-2-3iey.onrender.com/metal")
-            .then(res => res.json())
-            .then(data => {
-                // normalize backend key just in case
-                console.log(data);
-                setMetals({
-                    gold24: data.gold24,
-                    silver: data.silver,
-                    platinum: data.platinum,
-                    copper: data.copper,
-                    lead: data.Lead
-                });
+        fetch("http://localhost:8081/metal")   // ← use http unless you configured SSL
+            .then(res => {
+                if (!res.ok) throw new Error("API error");
+                return res.json();
             })
-            .catch(err => console.error("Fetch error:", err));
+            .then(data => {
+                setMetals({
+                    gold24: data.gold24 || "",
+                    silver: data.silver || "",
+                    platinum: data.platinum || "",
+                    copper: data.copper || "",
+                    lead: data.lead || ""
+                });
+                setLoading(false);
+            })
+            .catch(err => {
+                console.error("Fetch error:", err);
+                setLoading(false);
+            });
     }, []);
 
     const cards = [
@@ -57,10 +63,11 @@ function App() {
                 {filteredCards.map((card, index) => (
                     <div className={`card ${card.className}`} key={index}>
                         <h2>{card.icon} {card.name}</h2>
-                        <p className={card.value == null ? "loading" : ""}>
-                            {card.value != null ? card.value : "Fetching price..."}
+                        <p className={!card.value ? "loading" : ""}>
+                            {loading
+                                ? "Fetching price..."
+                                : card.value || "Not available"}
                         </p>
-
                     </div>
                 ))}
             </div>
