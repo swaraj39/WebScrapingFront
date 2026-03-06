@@ -13,12 +13,12 @@ function App() {
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        // fetch("https://webscraping-2-3iey.onrender.com/metal")
-        fetch("https://kong-0a753d981cusq2egm.kongcloud.dev/metal", {
-  headers: {
-    apikey: "CflYNyVLZ887vo9dijjxd27maQULtoEF"
-  }
-})
+        fetch("https://webscraping-2-3iey.onrender.com/metal")
+//         fetch("https://kong-0a753d981cusq2egm.kongcloud.dev/metal", {
+//   headers: {
+//     apikey: "CflYNyVLZ887vo9dijjxd27maQULtoEF"
+//   }
+// })
             .then(res => {
                 if (!res.ok) throw new Error("API error");
                 return res.json();
